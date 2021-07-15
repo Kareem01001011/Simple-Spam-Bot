@@ -3,6 +3,8 @@
 A Simple and easy way to be the most hated person between your friends, All you have to do is spam the group chat 
 using this bot until you get kicked...
 
+Please don't bully me if my readme and changelog files does not look that professional, that's my first real project.
+
 ## NOTES
 
 This is the first ALpha version of this project, Do not expect it to be polished/fully featured/not buggy, this is
@@ -13,12 +15,11 @@ There is also a 0.2 seconds delay between every message
 I'll make the delays changeable in later versions, the only way to change them at the moment is to open the code yourself
 and change them
 
-2. If you opened another window (or the input you were spamming was not pressed) the spamming will stop, basically the bot 
-works by typing the text you entered over and over again really quickly, so you'll have to watch the bot until it finishes
-spamming (or close the bot)
+## How it works
 
-3. There is a bug that makes the window of the spam bot not responding when it starts spamming which will make it really 
-hard to close, but you can close the terminal thats running the bot (the other window that runs when you opened the bot)
+Basically, the bot takes the text you entered in the first input and takes the number you entered in the second input and uses it 
+to know how many times you want to type the text you entered, and then it types it for you!
+Simple as that
 
 ## Installation
 
@@ -30,11 +31,19 @@ pip install pyautogui
 
 ## How to use
 
-1. Open `Main.py` file
-2. Type whatever you want to spam
-3. Enter how many times do you want to spam
-4. press the `Start Spamming` button
-5. Quickly switch to the window that you want to spam in and click on the input
-6. Wait until the bot finishes spamming
+* Text Spam mode:
+
+    1. Open `Main.py` file
+    2. Type whatever you want to spam
+    3. Enter how many times do you want to spam
+    4. press the `Start Spamming` button
+    5. Quickly switch to the window that you want to spam in and click on the input you want to type messages in 
+
+* Import File mode:
+
+    1. Open `Main.py` file
+    2. Enter the path of the text file you want to spam it content
+    3. press the `Start Spamming` button
+    4. Quickly switch to the window that you want to spam in and click on the input you want to type messages in
 
 <img src="https://i.imgur.com/XpOG7B9.gif" width="900" height="550" />
