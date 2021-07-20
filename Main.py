@@ -1,8 +1,11 @@
 from tkinter import *
+from tkinter import filedialog
 from tkinter import ttk
 from ttkthemes import ThemedTk
 import pyautogui
+import threading
 import time
+
 
 background = "#333"
 fontColor = "#ddd"
@@ -21,17 +24,16 @@ def lims():
 
     time.sleep(5)
     while startingNumber < number:
-        root.update()
         pyautogui.typewrite(text)
-        root.update()
         pyautogui.press("enter")
-        root.update()
         time.sleep(0.2)
-        root.update()
         startingNumber += 1
-        root.update()
         if running == False:
             break
+
+def uploadFile(event=None):
+    filename = filedialog.askopenfilename()
+    itv.set(filename)
 
 def imps():
 
@@ -41,25 +43,23 @@ def imps():
     time.sleep(5)
 
     for word in f:
-        root.update()
         pyautogui.typewrite(word)
-        root.update()
         pyautogui.press("enter")
-        root.update()
         time.sleep(0.2)
-        root.update()
         if running == False:
             break
 
 def startl():
     global running
     running = True
-    lims()
+    thread1 = threading.Thread(target=lims)
+    thread1.start()
 
 def starti():
     global running
     running = True
-    imps()
+    thread2 = threading.Thread(target=imps)
+    thread2.start()
 
 def stop():
     global running
@@ -82,6 +82,8 @@ modes.pack(expand=True, fill="both")
 mode1.config(background=background)
 mode2.config(background=background)
 
+# Text Spam mode tab
+
 title1 = Label(mode1, text="Spam Bot", bg=background, fg=fontColor, font=("Arial", 24))
 title1.pack(padx=30, pady=20)
 
@@ -101,14 +103,21 @@ button.pack(padx=10, pady=10)
 sbutton = Button(mode1, text="Stop Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=stop)
 sbutton.pack(padx=10, pady=10)
 
+# Import Spam mode tab
+
 title2 = Label(mode2, text="Spam Bot", bg=background, fg=fontColor, font=("Arial", 24))
 title2.pack(padx=30, pady=20)
 
 plabel = Label(mode2, text="Enter the file path of the file you want to spam it's content:", bg=background, fg=fontColor, font=("Arial", 14))
 plabel.pack()
 
-entry2 = Entry(mode2, bg="#333", fg="#ddd", font=("Arial", 16), width=50)
+itv = StringVar()
+entry2 = Entry(mode2, textvariable=itv, bg="#333", fg="#ddd", font=("Arial", 16), width=50)
 entry2.pack(padx=10,pady=10, ipady=10)
+
+upload = Button(mode2, text='Select File', bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=uploadFile)
+upload.pack(padx=10, pady=10)
+
 
 button1 = Button(mode2, text="Start Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=starti)
 button1.pack(padx=10, pady=10)
