@@ -1,3 +1,4 @@
+print("loading...")
 from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
@@ -5,124 +6,233 @@ from ttkthemes import ThemedTk
 import pyautogui
 import threading
 import time
+import json
 
+# Loading settings and global variables
 
-background = "#333"
-fontColor = "#ddd"
+importSettings = open('settings.json', 'r')
+settings = json.load(importSettings)
+
+startingDelay = settings["startingDelay"]
+messageDelay = settings["messageDelay"]
+textEnding = settings["textEnding"]
+
+bgc = settings["backgroundColor"]
+abgc = settings["backgroundColorActive"]
+fc = settings["foregroundColor"]
+afc = settings["foregroundColorActive"]
 
 running = True
 
-def lims():
+# Functions
 
-    text = entry.get()
-    text = str(text)
+def textSpam():
+    startTSB.config(state="disabled")
 
-    number = entry1.get()
-    number = float(number)
+    try:
+        text = textTSE.get()
+        text = str(text)
+
+        number = numberTSE.get()
+        number = float(number)
+    except:
+        startTSB.config(state="normal")
+        print("ValueError: could not convert string to float")
+
 
     startingNumber = 0
 
-    time.sleep(5)
+    time.sleep(float(startingDelay))
     while startingNumber < number:
         pyautogui.typewrite(text)
-        pyautogui.press("enter")
-        time.sleep(0.2)
+        pyautogui.press(textEnding)
+        time.sleep(float(messageDelay))
         startingNumber += 1
         if running == False:
             break
+    startTSB.config(state="normal")
+    
 
 def uploadFile(event=None):
     filename = filedialog.askopenfilename()
-    itv.set(filename)
+    pv.set(filename)
 
-def imps():
+def fileSpam():
+    startFSB.config(state="disabled")
 
-    path = entry2.get()
+    path = pathFSE.get()
     f = open(path,'r')
 
-    time.sleep(5)
+    time.sleep(float(startingDelay))
 
     for word in f:
         pyautogui.typewrite(word)
-        pyautogui.press("enter")
-        time.sleep(0.2)
+        pyautogui.press(textEnding)
+        time.sleep(float(messageDelay))
         if running == False:
             break
 
-def startl():
+    startFSB.config(state="normal")
+
+def infiniteSpam():
+    startISB.config(state="disabled")
+
+    text = textISE.get()
+    text = str(text)
+
+    time.sleep(float(startingDelay))
+
+    while True:
+        pyautogui.typewrite(text)
+        pyautogui.press(textEnding)
+        time.sleep(float(messageDelay))
+        if running == False:
+            break
+
+    startISB.config(state="normal")
+
+def startTS():
     global running
     running = True
-    thread1 = threading.Thread(target=lims)
+    thread1 = threading.Thread(target=textSpam)
     thread1.start()
 
-def starti():
+def startFS():
     global running
     running = True
-    thread2 = threading.Thread(target=imps)
+    thread2 = threading.Thread(target=fileSpam)
     thread2.start()
+
+def startIS():
+    global running
+    running = True
+    thread3 = threading.Thread(target=infiniteSpam)
+    thread3.start()
 
 def stop():
     global running
     running = False
 
+def applySettings():
+    startingDelayI = startingDelaySE.get()
+    messageDelayI = messageDelaySE.get()
+    textEndingI = textEndingSE.get()
+
+    settings["startingDelay"] = startingDelayI
+    settings["messageDelay"] = messageDelayI
+    settings["textEnding"] = textEndingI
+
+    settingsFile = open("settings.json", "w")
+    json.dump(settings, settingsFile)
+
+
 root = ThemedTk(theme="equilux")
 root.geometry("720x720")
 root.resizable(0,0)
 root.title("Spam bot")
-root.config(background=background)
+root.config(background=bgc)
 
-modes = ttk.Notebook(root)
+tabs = ttk.Notebook(root)
 
-mode1 = Frame(modes)
-mode2 = Frame(modes)
+mode1 = Frame(tabs)
+mode2 = Frame(tabs)
+mode3 = Frame(tabs)
+setting = Frame(tabs)
 
-modes.add(mode1, text="Text Spam mode")
-modes.add(mode2, text="File Spam mode")
-modes.pack(expand=True, fill="both")
-mode1.config(background=background)
-mode2.config(background=background)
+tabs.add(mode1, text="Text Spam mode")
+tabs.add(mode2, text="File Spam mode")
+tabs.add(mode3, text="Infinite Spam mode")
+tabs.add(setting, text="Settings")
 
-# Text Spam mode tab
+tabs.pack(expand=True, fill="both")
 
-title1 = Label(mode1, text="Spam Bot", bg=background, fg=fontColor, font=("Arial", 24))
-title1.pack(padx=30, pady=20)
+mode1.config(background=bgc)
+mode2.config(background=bgc)
+mode3.config(background=bgc)
+setting.config(background=bgc)
 
-tlabel = Label(mode1, text="Enter the text you want to spam:", bg=background, fg=fontColor, font=("Arial", 16))
-tlabel.pack()
-entry = Entry(mode1, bg="#333", fg="#ddd", font=("Arial", 16), width=50)
-entry.pack(padx=10,pady=10, ipady=10)
+# more global variables
 
-nlabel = Label(mode1, text="How many times do you want to spam it:", bg=background, fg=fontColor, font=("Arial", 16))
-nlabel.pack()
-entry1 = Entry(mode1, bg="#333", fg="#ddd", font=("Arial", 16), width=50)
-entry1.pack(padx=10, pady=10, ipady=10)
+pv = StringVar()
 
-button = Button(mode1, text="Start Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=startl)
-button.pack(padx=10, pady=10)
+startingDelaySV = StringVar()
+messageDelaySV = StringVar()
+textEndingSV = StringVar()
 
-sbutton = Button(mode1, text="Stop Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=stop)
-sbutton.pack(padx=10, pady=10)
+startingDelaySV.set(startingDelay)
+messageDelaySV.set(messageDelay)
+textEndingSV.set(textEnding)
 
-# Import Spam mode tab
+print("Done loading!")
 
-title2 = Label(mode2, text="Spam Bot", bg=background, fg=fontColor, font=("Arial", 24))
-title2.pack(padx=30, pady=20)
+# Text Spam (TS) mode tab
 
-plabel = Label(mode2, text="Enter the file path of the file you want to spam it's content:", bg=background, fg=fontColor, font=("Arial", 14))
-plabel.pack()
+titleTSL = Label(mode1, text="Spam Bot", bg=bgc, fg=fc, font=("Arial", 24))
+textTSL = Label(mode1, text="Enter the text you want to spam:", bg=bgc, fg=fc, font=("Arial", 16))
+textTSE = Entry(mode1, width=50, bg="#333", fg="#ddd", font=("Arial", 16))
+numberTSL = Label(mode1, text="How many times do you want to spam it:", bg=bgc, fg=fc, font=("Arial", 16))
+numberTSE = Entry(mode1, width=50, bg="#333", fg="#ddd", font=("Arial", 16))
+startTSB = Button(mode1, text="Start Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground=abgc, activeforeground=afc, command=startTS)
+stopTSB = Button(mode1, text="Stop Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground=abgc, activeforeground=afc, command=stop)
 
-itv = StringVar()
-entry2 = Entry(mode2, textvariable=itv, bg="#333", fg="#ddd", font=("Arial", 16), width=50)
-entry2.pack(padx=10,pady=10, ipady=10)
+titleTSL.pack(padx=30, pady=20)
+textTSL.pack(fill='both')
+textTSE.pack(padx=10,pady=10, ipady=10)
+numberTSL.pack()
+numberTSE.pack(padx=10, pady=10, ipady=10)
+startTSB.pack(padx=10, pady=10)
+stopTSB.pack(padx=10, pady=10)
 
-upload = Button(mode2, text='Select File', bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=uploadFile)
-upload.pack(padx=10, pady=10)
+# File Spam (FS) mode tab
 
+titleFSL = Label(mode2, text="Spam Bot", bg=bgc, fg=fc, font=("Arial", 24))
+pathFSL = Label(mode2, text="Enter the file path of the file you want to spam it's content:", bg=bgc, fg=fc, font=("Arial", 14))
+pathFSE = Entry(mode2, textvariable=pv, bg="#333", fg="#ddd", font=("Arial", 16), width=50)
+uploadFSB = Button(mode2, text='Select File', bg="#333", fg="#ddd", font=("Arial", 24), activebackground=abgc, activeforeground=afc, command=uploadFile)
+startFSB = Button(mode2, text="Start Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground=abgc, activeforeground=afc, command=startFS)
+stopFSB = Button(mode2, text="Stop Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground=abgc, activeforeground=afc, command=stop)
 
-button1 = Button(mode2, text="Start Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=starti)
-button1.pack(padx=10, pady=10)
+titleFSL.pack(padx=30, pady=20)
+pathFSL.pack()
+pathFSE.pack(padx=10,pady=10, ipady=10)
+uploadFSB.pack(padx=10, pady=10)
+startFSB.pack(padx=10, pady=10)
+stopFSB.pack(padx=10, pady=10)
 
-sbutton2 = Button(mode2, text="Stop Spamming", bg="#333", fg="#ddd", font=("Arial", 24), activebackground="#222", activeforeground="#aaa", command=stop)
-sbutton2.pack(padx=10, pady=10)
+# Infinite Spam (IS) mode tab
+
+titleISL = Label(mode3, text="Spam Bot", bg=bgc, fg=fc, font=("Arial", 24))
+textISL = Label(mode3, text="Enter the text you want to spam:", bg=bgc, fg=fc, font=("Arial", 16))
+textISE = Entry(mode3, bg=bgc, fg="#ddd", font=("Arial", 16), width=50)
+startISB = Button(mode3, text="Start Spamming", bg=bgc, fg=fc, activebackground=abgc, activeforeground=afc, font=("Arial", 24), command=startIS)
+stopISB = Button(mode3, text="Stop Spamming", bg=bgc, fg=fc, activebackground=abgc, activeforeground=afc, font=("Arial", 24), command=stop)
+
+titleISL.pack(padx=30, pady=20)
+textISL.pack()
+textISE.pack(padx=10,pady=10, ipady=10)
+startISB.pack(padx=10, pady=10)
+stopISB.pack(padx=10, pady=10)
+
+# Settings (S) tab
+
+titleSL = Label(setting, text="Settings", bg=bgc, fg=fc, font=("Arial", 24))
+startingDelaySL = Label(setting, text="Starting Delay:", anchor='w', bg=bgc, fg=fc, font=("Arial", 16))
+startingDelaySE = Entry(setting, textvariable=startingDelaySV, bg="#333", fg="#ddd", font=("Arial", 16), width=40)
+messageDelaySL = Label(setting, text="Message Delay:", anchor='w', bg=bgc, fg=fc, font=("Arial", 16))
+messageDelaySE = Entry(setting, textvariable=messageDelaySV, bg="#333", fg="#ddd", font=("Arial", 16), width=40)
+textEndingSL = Label(setting, text="Button pressed after each sentence:", anchor='w', bg=bgc, fg=fc, font=("Arial", 16))
+textEndingSE = Entry(setting, textvariable=textEndingSV, bg="#333", fg="#ddd", font=("Arial", 16), width=40)
+saveSB = Button(setting, text="Save", bg="#333", fg="#ddd", font=("Arial", 24), activebackground=abgc, activeforeground=afc, command=applySettings)
+noteSL = Label(setting, text="Note: you'll have to restart the app to apply changes", bg=bgc, fg=fc, font=("Arial", 14))
+
+titleSL.pack(padx=30, pady=20)
+startingDelaySL.pack(fill='both')
+startingDelaySE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
+messageDelaySL.pack(fill='both')
+messageDelaySE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
+textEndingSL.pack(fill='both')
+textEndingSE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
+saveSB.pack(padx=10, pady=10)
+noteSL.pack()
 
 root.mainloop()

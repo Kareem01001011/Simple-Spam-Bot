@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.0.0] Beta - 2021-7-22
+
+- Beta release
+- Rewritten the entire code to make it look more clean, organized and readable
+- Added Infinite Spam mode
+- Added Settings
+- You can now change the starting delay and message delay in the settings
+- Fixed bugs and improved performance
+
 ## [1.2.0] Alpha - 2021-7-20
 
 - Added Multithreading to replace the `root.update()` function used to fix the window not responding when spamming
