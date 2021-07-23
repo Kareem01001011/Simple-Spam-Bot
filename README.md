@@ -54,5 +54,6 @@ pip install pyautogui
     3. press the `Start Spamming` button
     4. Quickly switch to the window that you want to spam in and click on the input you want to type messages in 
 
-**NOTE: this gif is showing the spambot with 0.2 message delay, it can type faster if the message delay is 0 which you can change in the settings*
+**NOTE: this gif is showing the spambot with 0.2 message delay, it can type faster if the message delay is 0 which you can change in the settings**
+**ANOTHER NOTE: this gif is showing the first alpha version of the spambot not the latest version**
 <img src="https://i.imgur.com/XpOG7B9.gif" width="900" height="550" />
