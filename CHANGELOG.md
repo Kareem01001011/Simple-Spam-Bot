@@ -4,12 +4,23 @@ All notable changes to this project will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [2.0.0] Beta - 2021-9-*
+
+- Seems like I forgot to push the settings file in the last update, oops...
+- The bot will now use the default settings if the settings file is not found (just incase I do that again)
+- Added Reset to default button in the Settings tab
+- Renamed `Main.py` to `main.py`
+- Added a counter that says how many messages have been spammed and how many messages left
+- Cleaned more of the code again and added more comments to make it easier to read and maintain
+- Made more use of the terminal thats sitting in the back doing nothing at all
+- Fixed bugs and improved performance
+
 ## [1.0.0] Beta - 2021-7-22
 
 - Beta release
-- Rewritten the entire code to make it look more clean, organized and readable
+- Rewritten the entire code to make it look more organized, clean and readable
 - Added Infinite Spam mode
-- Added Settings
+- Added Settings tab
 - You can now change the starting delay and message delay in the settings
 - Fixed bugs and improved performance
 
