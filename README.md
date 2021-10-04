@@ -16,7 +16,7 @@ to know how many times you want to type the text you entered, and then it types 
 
 ## Installation
 
-First, you need to install Python and make sure it's added to PATH
+First, you need to install Python and make sure it's added to PATH, 
 Then open the Command Prompt and type this command:
 ```batch
 pip install pyautogui
