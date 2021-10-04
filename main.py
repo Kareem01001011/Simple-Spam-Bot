@@ -9,9 +9,6 @@ import threading
 import time
 import json
 
-# NOTE: replace the ValueError try except with something like the code in
-# "Raise an exception" part in this link: https://www.w3schools.com/python/python_try_except.asp
-
 # Loading settings and some global variables
 
 bgc = "#333"
