@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Added Reset to default button in the Settings tab
 - Renamed `Main.py` to `main.py`
 - Added a counter that says how many messages have been spammed and how many messages left
+- Imporved error detection and error handling
 - Cleaned more of the code again and added more comments to make it easier to read and maintain
 - Made more use of the terminal thats sitting in the back doing nothing at all
 - Fixed bugs and improved performance
