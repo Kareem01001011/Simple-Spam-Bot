@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [2.0.0] Beta - 2021-9-*
+## [2.0.1] Beta - 2021-10-6
+
+- Fixed some bugs and improved preformance
+
+## [2.0.0] Beta - 2021-10-4
 
 - Seems like I forgot to push the settings file in the last update, oops...
 - The bot will now use the default settings if the settings file is not found (just incase I do that again)

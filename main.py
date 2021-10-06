@@ -9,16 +9,19 @@ import threading
 import time
 import json
 
-# Loading settings and some global variables
+# loading the settings and some global variables
+
+# Colors
 
 bgc = "#333"
 abgc = "#222"
 fgc = "#ddd"
 afgc = "#333"
 
-disableSettings = False
+disableSettings = False # this is set to True when the settings file is not found to disable the settings tab
 global spamming
-spamming = True
+spamming = True # This is set to False when the stop button is pressed to stop the spamming functions, this 
+# is not the most efficient way to do this but multithreading makes it much harder for me to figure out a better way to do it
 
 try:
 
@@ -31,13 +34,13 @@ except FileNotFoundError as error:
     print("The default settings will be used and the Settings tab will be disabled until the settings file is retrieved/replaced")
     print("Error message:\n   ", "FileNotFoundError: {0}".format(error))
     disableSettings = True
-    startingDelay = float("0")
+    startingDelay = float("5")
     messageDelay = float("0.2")
     textEnding = "enter"
 
 except:
 
-    print("Error: An unexpected error occured, Please send the error message to the developer to try to fix this issue.")
+    print("\nError: An unexpected error occured while importing the settings from the settings file (settings.json), \nPlease send this error message to the developer to try to fix this issue.")
     print("Error message: ")
     raise
 
@@ -45,26 +48,52 @@ else:
 
     try:
         startingDelay = float(settingsF["startingDelay"])
-    except ValueError as error:
-        startingDelay = float("0")
-        print("Error: The starting delay is not set to a number, the bot will use the default \nstarting delay until you change it from the settings")
-        print("Error message:\n   ", "ValueError: {0}".format(error))
+    except ValueError as sdverr:
+        startingDelay = float("5")
+        print("\nError: The starting delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
+        print("Error message: ", "ValueError: {0}".format(sdverr))
+
+    except KeyError as sdkerr:
+
+        startingDelay = float("5")
+        print("\nError: The starting delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
+        print("Error message: ", "KeyError: {0}".format(sdkerr))
 
     try:
         messageDelay = float(settingsF["messageDelay"])
-    except ValueError as error:
-        print("Error: The message delay is not set to a number, the bot will use the default \nmessage delay until you change it from the settings")
-        print("Error message:\n   ", "ValueError: {0}".format(error))
+    except ValueError as mdverr:
 
-    textEnding = settingsF["textEnding"]
+        messageDelay = float("0.2")
+        print("\nError: The message delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
+        print("Error message: ", "ValueError: {0}".format(mdverr))
 
+    except KeyError as mdkerr:
+
+        messageDelay = float("0.2")
+        print("\nError: The message delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
+        print("Error message: ", "KeyError: {0}".format(mdkerr))
+
+    try:
+        textEnding = settingsF["textEnding"]
+    except KeyError as tekerr:
+
+        textEnding = "enter"
+        print("\nError: The text ending is either not found or not set to a valid value, the bot will use the default \nstarting delay until you change it from the settings tab")
+        print("A list of valid keys can be found here: https://pytutorial.com/pyautogui-keyboard-keys")
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
+        print("Error message: ", "KeyError: {0}".format(tekerr))
+        
 # Functions
 
 def textSpam():
 
     global spamming
-    startTSB.config(state="disabled") # don't forget to disable the start button
-
+    startTSB.config(state="disabled") # don't forget to disable the start button to not cause memory issues if 
+    # the user was impatient and pressed the start button more that one time
     text = str(textTSE.get())
     number = numberTSE.get()
     try:
@@ -72,7 +101,8 @@ def textSpam():
     except ValueError as error:
         print("Error: You can only type numbers here not letters")
         print("Error message:\n   ", "ValueError: {0}".format(error))
-        startTSB.config(state="normal") # enable the start button again if an error occured
+        startTSB.config(state="normal") # enable the start button again if an error 
+        # occured so the user doesn't have to restart the app to be able to start again
         spamming = False
 
     startingNumber = 0
@@ -81,7 +111,7 @@ def textSpam():
     time.sleep(startingDelay)
 
     if spamming is True:
-        
+        print("Started Spamming")
         while startingNumber < number:
             if spamming is False:
                 break
@@ -107,7 +137,7 @@ def infiniteSpam():
 
     messagesSpammed = 0
     time.sleep(startingDelay)
-
+    print("Started Spamming")
     while True:
         if spamming is False:
             break
@@ -135,7 +165,7 @@ def fileSpam():
 
     checkIfFileExists = isfile(path)
     if checkIfFileExists is False:
-        print("Error: That file doesn't exist, make sure you've typed the correct file name/path")
+        print("\nError: That file doesn't exist, make sure you've typed the correct file name/path")
         startISB.config(state="normal")
         spamming = False
     elif checkIfFileExists is True:
@@ -145,7 +175,7 @@ def fileSpam():
     messagesSpammed = 0
 
     if spamming is True:
-
+        print("Started Spamming")
         for word in f:
             if spamming is False:
                 break
@@ -183,11 +213,11 @@ def startFS(): # for file spam mode
     thread2 = threading.Thread(target=fileSpam)
     thread2.start()
 
-def stop():
+def stop(): # stops all the spamming functions
 
     global spamming
     spamming = False
-    print("Stopped")
+    print("Stopped Spamming")
 
 def applySettings():
 
@@ -347,7 +377,7 @@ saveSB.pack(padx=10, pady=10)
 resetSB.pack(padx=7, pady=7)
 noteSL.pack()
 
-print("\nDone loading!\n")
+print("\nDone loading!")
 
 if __name__ == '__main__':
     root.mainloop()
