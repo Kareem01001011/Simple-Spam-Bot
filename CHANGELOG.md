@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [2.1.0] Beta - 2022-7-15
+
+After realizing that this code is utter garbage (pretty expected because this is my first project), I decided to stop wasting the time spent trying to add new stuff and fix this mess. I'll only work on it again if I personally want to add a new feature to annoy my friends or rewrite it again when I become a more experienced programmer.
+
+- Fixed file spam mode
+- Start function now stops the threads when it's done
+- Fixed a lot of bugs and improved preformance
+- I honestly don't remember what new thing I added or fixed in this version other than those, so I think you'll just have to figure it out.
+
 ## [2.0.1] Beta - 2021-10-6
 
 - Fixed some bugs and improved preformance

@@ -1,4 +1,5 @@
 print("loading...")
+import sys
 from os.path import isfile
 from tkinter import *
 from tkinter import filedialog
@@ -9,7 +10,7 @@ import threading
 import time
 import json
 
-# loading the settings and some global variables
+# loading settings and some global variables
 
 # Colors
 
@@ -92,8 +93,8 @@ else:
 def textSpam():
 
     global spamming
-    startTSB.config(state="disabled") # don't forget to disable the start button to not cause memory issues if 
-    # the user was impatient and pressed the start button more that one time
+    startTSB.config(state="disabled") # don't forget to disable the start button to not cause performance issues and
+    # unwanted behaviour if the user was impatient and pressed the start button more that one time
     text = str(textTSE.get())
     number = numberTSE.get()
     try:
@@ -101,9 +102,10 @@ def textSpam():
     except ValueError as error:
         print("Error: You can only type numbers here not letters")
         print("Error message:\n   ", "ValueError: {0}".format(error))
-        startTSB.config(state="normal") # enable the start button again if an error 
-        # occured so the user doesn't have to restart the app to be able to start again
         spamming = False
+        startTSB.config(state="normal") # re-enable the start button if an error 
+        # occured so the user doesn't have to restart the app to be able to start again
+        sys.exit()
 
     startingNumber = 0
     messagesSpammed = 0
@@ -114,7 +116,7 @@ def textSpam():
         print("Started Spamming")
         while startingNumber < number:
             if spamming is False:
-                break
+                sys.exit()
 
             pyautogui.typewrite(text)
             pyautogui.press(textEnding)
@@ -126,10 +128,15 @@ def textSpam():
 
             messagesSpammedTSL.configure(text=f"Messages spammed: {messagesSpammed}")
             messagesLeftTSL.configure(text=f"Messages left: {messagesLeft}")
-            
-        startTSB.config(state="normal") # also don't forget to enable the start button again when the spamming ends
+        
+    print("Done!")    
+    startTSB.config(state="normal") # also don't forget to enable the start button again when the spamming ends
+    sys.exit()
 
 def infiniteSpam():
+        
+    global enableStartISV
+    enableStartISV = True
 
     startISB.config(state="disabled")
 
@@ -138,18 +145,22 @@ def infiniteSpam():
     messagesSpammed = 0
     time.sleep(startingDelay)
     print("Started Spamming")
+    
     while True:
-        if spamming is False:
-            break
+        if enableStartISV:
+            if spamming is False:
+                sys.exit()
 
-        pyautogui.typewrite(text)
-        pyautogui.press(textEnding)
-        time.sleep(messageDelay)
+            pyautogui.typewrite(text)
+            pyautogui.press(textEnding)
+            time.sleep(messageDelay)
 
-        messagesSpammed += 1
-        messagesSpammedISL.configure(text=f"Messages spammed: {messagesSpammed}")
-
-    startISB.config(state="normal")
+            messagesSpammed += 1
+            messagesSpammedISL.configure(text=f"Messages spammed: {messagesSpammed}")
+        else:
+            startISB.config(state="normal")
+            sys.exit()
+            
 
 def uploadFile(event=None):
 
@@ -159,26 +170,26 @@ def uploadFile(event=None):
 
 def fileSpam():
 
-    startFSB.config(state="disabled")
-
-    path = pathFSE.get()
-
-    checkIfFileExists = isfile(path)
-    if checkIfFileExists is False:
-        print("\nError: That file doesn't exist, make sure you've typed the correct file name/path")
-        startISB.config(state="normal")
-        spamming = False
-    elif checkIfFileExists is True:
+    global spamming
+        
+    try:
+        path = pathFSE.get()
         f = open(path,'r')
+    except FileNotFoundError as fnferr:
+        print("\nError: That file doesn't exist, make sure you've typed the correct file name/path")
+        print("Error message: ", "FileNotFoundError: {0}".format(fnferr))
+        spamming = False
+        startFSB.config(state="normal")
 
     time.sleep(startingDelay)
     messagesSpammed = 0
+    spamming = True
 
-    if spamming is True:
-        print("Started Spamming")
-        for word in f:
-            if spamming is False:
-                break
+    print("Started Spamming")
+    for word in f:
+        if spamming is False:
+            break
+        else:
             pyautogui.typewrite(word)
             pyautogui.press(textEnding)
             time.sleep(messageDelay)
@@ -186,36 +197,35 @@ def fileSpam():
             messagesSpammed += 1
             messagesSpammedFSL.configure(text=f"Messages spammed: {messagesSpammed}")
 
+    print("Done!")
     startFSB.config(state="normal")
-
-# Start buttons for each spamming mode (because if the user decided to be crazy and 
-# spam using the three modes in the same time (which will cause a not-wanted 
-# result, I've tried it myself...)), but it's there anyways
+    sys.exit()
 
 def startTS(): # for text spam mode
 
     global spamming
     spamming = True
-    thread1 = threading.Thread(target=textSpam)
-    thread1.start()
+    TSthread = threading.Thread(target=textSpam)
+    TSthread.start()
 
 def startIS(): # for infinite spam mode
 
     global spamming
     spamming = True
-    thread3 = threading.Thread(target=infiniteSpam)
-    thread3.start()
+    ISthread = threading.Thread(target=infiniteSpam)
+    ISthread.start()
 
 def startFS(): # for file spam mode
 
     global spamming
     spamming = True
-    thread2 = threading.Thread(target=fileSpam)
-    thread2.start()
+    FSthread = threading.Thread(target=fileSpam)
+    FSthread.start()
 
 def stop(): # stops all the spamming functions
 
-    global spamming
+    global spamming, enableStartISV
+    enableStartISV = False
     spamming = False
     print("Stopped Spamming")
 
@@ -231,7 +241,7 @@ def applySettings():
 
     settingsFile = open("settings.json", "w")
     json.dump(settingsF, settingsFile)
-    print("Saved!, Restart to apply changes")
+    print("Saved! \nRestart to apply changes")
 
 def resetSettings():
 
@@ -245,12 +255,12 @@ def resetSettings():
 
     settingsFile = open("settings.json", "w")
     json.dump(settingsF, settingsFile)
-    print("Your settings are set back to the default settings, Restart to apply changes")
+    print("Your settings are set back to default. Restart to apply changes")
 
 # Setting up the GUI
 
 root = ThemedTk(theme="equilux")
-root.geometry("720x720")
+root.geometry("720x850")
 root.resizable(0,0)
 root.title("Spam bot")
 root.config(background=bgc)
@@ -377,7 +387,7 @@ saveSB.pack(padx=10, pady=10)
 resetSB.pack(padx=7, pady=7)
 noteSL.pack()
 
-print("\nDone loading!")
+print("Done loading!\n")
 
 if __name__ == '__main__':
     root.mainloop()
