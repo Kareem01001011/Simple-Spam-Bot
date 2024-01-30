@@ -1,23 +1,17 @@
 print("loading...")
 import sys
-from os.path import isfile
-from tkinter import *
-from tkinter import filedialog
-from tkinter import ttk
-from ttkthemes import ThemedTk
+from customtkinter import *
 import pyautogui
 import threading
 import time
 import json
 
-# loading settings and some global variables
+# loading settings and global variables
 
-# Colors
+# Theme
 
-bgc = "#333"
-abgc = "#222"
-fgc = "#ddd"
-afgc = "#333"
+set_appearance_mode("System")
+set_default_color_theme("dark-blue")
 
 disableSettings = False # this is set to True when the settings file is not found to disable the settings tab
 global spamming
@@ -36,7 +30,7 @@ except FileNotFoundError as error:
     print("Error message:\n   ", "FileNotFoundError: {0}".format(error))
     disableSettings = True
     startingDelay = float("5")
-    messageDelay = float("0.2")
+    messageDelay = float("0.0")
     textEnding = "enter"
 
 except:
@@ -52,28 +46,27 @@ else:
     except ValueError as sdverr:
         startingDelay = float("5")
         print("\nError: The starting delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
-        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
         print("Error message: ", "ValueError: {0}".format(sdverr))
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
 
     except KeyError as sdkerr:
 
         startingDelay = float("5")
         print("\nError: The starting delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
-        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
         print("Error message: ", "KeyError: {0}".format(sdkerr))
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
 
     try:
         messageDelay = float(settingsF["messageDelay"])
     except ValueError as mdverr:
 
-        messageDelay = float("0.2")
+        messageDelay = float("0.0")
         print("\nError: The message delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
-        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
         print("Error message: ", "ValueError: {0}".format(mdverr))
-
+        print("\nNOTE: The settings tab might show a different value than the actual value that caused this error")
     except KeyError as mdkerr:
 
-        messageDelay = float("0.2")
+        messageDelay = float("0.0")
         print("\nError: The message delay is either not found or not set to a valid number, the bot will use the default \nstarting delay until you change it from the settings tab")
         print("NOTE: The settings tab might show a different value than the actual value that caused this error")
         print("Error message: ", "KeyError: {0}".format(mdkerr))
@@ -85,15 +78,15 @@ else:
         textEnding = "enter"
         print("\nError: The text ending is either not found or not set to a valid value, the bot will use the default \nstarting delay until you change it from the settings tab")
         print("A list of valid keys can be found here: https://pytutorial.com/pyautogui-keyboard-keys")
-        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
         print("Error message: ", "KeyError: {0}".format(tekerr))
+        print("NOTE: The settings tab might show a different value than the actual value that caused this error")
         
 # Functions
 
 def textSpam():
 
     global spamming
-    startTSB.config(state="disabled") # don't forget to disable the start button to not cause performance issues and
+    startTSB.configure(state="disabled") # don't forget to disable the start button to not cause performance issues and
     # unwanted behaviour if the user was impatient and pressed the start button more that one time
     text = str(textTSE.get())
     number = numberTSE.get()
@@ -103,8 +96,8 @@ def textSpam():
         print("Error: You can only type numbers here not letters")
         print("Error message:\n   ", "ValueError: {0}".format(error))
         spamming = False
-        startTSB.config(state="normal") # re-enable the start button if an error 
-        # occured so the user doesn't have to restart the app to be able to start again
+        startTSB.configure(state="normal") # re-enable the start button if an error 
+        # occurred so the user doesn't have to restart the app to be able to start again
         sys.exit()
 
     startingNumber = 0
@@ -117,28 +110,25 @@ def textSpam():
         while startingNumber < number:
             if spamming is False:
                 sys.exit()
+            else:
+                pyautogui.typewrite(text)
+                pyautogui.press(textEnding)
+                time.sleep(messageDelay)
 
-            pyautogui.typewrite(text)
-            pyautogui.press(textEnding)
-            time.sleep(messageDelay)
+                startingNumber += 1
+                messagesSpammed += 1
+                messagesLeft = number - messagesSpammed
 
-            startingNumber += 1
-            messagesSpammed += 1
-            messagesLeft = number - messagesSpammed
-
-            messagesSpammedTSL.configure(text=f"Messages spammed: {messagesSpammed}")
-            messagesLeftTSL.configure(text=f"Messages left: {messagesLeft}")
-        
-    print("Done!")    
-    startTSB.config(state="normal") # also don't forget to enable the start button again when the spamming ends
-    sys.exit()
+                messagesSpammedTSL.configure(text=f"Messages spammed: {messagesSpammed}")
+                messagesLeftTSL.configure(text=f"Messages left: {messagesLeft}")
+        else:
+            print("Done!")
+            startTSB.configure(state="normal") # also don't forget to enable the start the button again when the spamming ends
+            sys.exit()
 
 def infiniteSpam():
-        
-    global enableStartISV
-    enableStartISV = True
 
-    startISB.config(state="disabled")
+    startISB.configure(state="disabled")
 
     text = str(textISE.get())
 
@@ -146,20 +136,19 @@ def infiniteSpam():
     time.sleep(startingDelay)
     print("Started Spamming")
     
-    while True:
-        if enableStartISV:
-            if spamming is False:
-                sys.exit()
-
+    for _ in iter(int, 1):
+        if spamming is False:
+            sys.exit()
+        else:
             pyautogui.typewrite(text)
             pyautogui.press(textEnding)
             time.sleep(messageDelay)
 
             messagesSpammed += 1
             messagesSpammedISL.configure(text=f"Messages spammed: {messagesSpammed}")
-        else:
-            startISB.config(state="normal")
-            sys.exit()
+    else:
+        startISB.configure(state="normal")
+        sys.exit()
             
 
 def uploadFile(event=None):
@@ -171,6 +160,8 @@ def uploadFile(event=None):
 def fileSpam():
 
     global spamming
+
+    startFSB.configure(state="disabled")
         
     try:
         path = pathFSE.get()
@@ -179,27 +170,34 @@ def fileSpam():
         print("\nError: That file doesn't exist, make sure you've typed the correct file name/path")
         print("Error message: ", "FileNotFoundError: {0}".format(fnferr))
         spamming = False
-        startFSB.config(state="normal")
+        startFSB.configure(state="normal")
+    except:
+        print("\nError: An unexpected error occured while importing the settings from the settings file (settings.json), \nPlease send this error message to the developer to try to fix this issue.")
+        print("Error message: ")
+        spamming = False
+        startFSB.configure(state="normal")
+        raise
 
     time.sleep(startingDelay)
     messagesSpammed = 0
     spamming = True
-
     print("Started Spamming")
+
     for word in f:
         if spamming is False:
             break
         else:
             pyautogui.typewrite(word)
-            pyautogui.press(textEnding)
             time.sleep(messageDelay)
+            pyautogui.press(textEnding)
 
             messagesSpammed += 1
             messagesSpammedFSL.configure(text=f"Messages spammed: {messagesSpammed}")
-
-    print("Done!")
-    startFSB.config(state="normal")
-    sys.exit()
+    else:
+        print("Done!")
+        startFSB.configure(state="normal")
+        sys.exit()
+        
 
 def startTS(): # for text spam mode
 
@@ -222,10 +220,9 @@ def startFS(): # for file spam mode
     FSthread = threading.Thread(target=fileSpam)
     FSthread.start()
 
-def stop(): # stops all the spamming functions
+def stop(): # stops all spamming functions
 
-    global spamming, enableStartISV
-    enableStartISV = False
+    global spamming
     spamming = False
     print("Stopped Spamming")
 
@@ -246,7 +243,7 @@ def applySettings():
 def resetSettings():
 
     settingsF["startingDelay"] = float("5")
-    settingsF["messageDelay"] = float("0.2")
+    settingsF["messageDelay"] = float("0.0")
     settingsF["textEnding"] = "enter"
 
     startingDelaySV.set("5")
@@ -259,37 +256,25 @@ def resetSettings():
 
 # Setting up the GUI
 
-root = ThemedTk(theme="equilux")
-root.geometry("720x850")
-root.resizable(0,0)
+root = CTk( )
+root.geometry("500x550")
+#root.resizable(0,0)
 root.title("Spam bot")
-root.config(background=bgc)
 
-tabs = ttk.Notebook(root)
+tabview = CTkTabview(root)
+tabview.pack(padx=20, pady=20, expand=True, fill="both")
 
-TSTab = Frame(tabs)
-FSTab = Frame(tabs)
-ISTab = Frame(tabs)
-settingsT = Frame(tabs)
+tabview.add("Text Spam mode")
+tabview.add("File Spam mode")
+tabview.add("Infinite Spam mode")
+tabview.add("Settings")
 
-tabs.add(TSTab, text="Text Spam mode")
-tabs.add(ISTab, text="Infinite Spam mode")
-tabs.add(FSTab, text="File Spam mode")
-tabs.add(settingsT, text="Settings")
+tabview.set("Text Spam mode")  # set currently visible tab
 
-tabs.pack(expand=True, fill="both")
-
-TSTab.config(background=bgc)
-ISTab.config(background=bgc)
-FSTab.config(background=bgc)
-settingsT.config(background=bgc)
-
-# This if statement disables the settings tab if the settings file is not found to avoid errors
-
-if disableSettings is True:
-    tabs.tab(3, state="disabled")
-else:
-    tabs.tab(3, state="normal")
+TSTab = tabview.tab("Text Spam mode")
+FSTab = tabview.tab("File Spam mode")
+ISTab = tabview.tab("Infinite Spam mode")
+settingsTab = tabview.tab("Settings")
 
 # more global variables
 
@@ -307,15 +292,15 @@ textEndingSV.set(textEnding)
 
 # Text Spam (TS) mode tab
 
-titleTSL = Label(TSTab, text="Spam Bot", bg=bgc, fg=fgc, font=("Arial", 24))
-textTSL = Label(TSTab, text="Enter the text you want to spam:", bg=bgc, fg=fgc, font=("Arial", 16))
-textTSE = Entry(TSTab, width=50, bg=bgc, fg=fgc, font=("Arial", 16))
-numberTSL = Label(TSTab, text="How many times do you want to spam it:", bg=bgc, fg=fgc, font=("Arial", 16))
-numberTSE = Entry(TSTab, width=50, bg=bgc, fg=fgc, font=("Arial", 16))
-messagesSpammedTSL = Label(TSTab, text="", bg=bgc, fg=fgc, font=("Arial", 14))
-messagesLeftTSL = Label(TSTab, text="", bg=bgc, fg=fgc, font=("Arial", 16))
-startTSB = Button(TSTab, text="Start", bg=bgc, fg=fgc, font=("Arial", 24), activebackground=abgc, activeforeground=afgc, command=startTS)
-stopTSB = Button(TSTab, text="Stop", bg=bgc, fg=fgc, font=("Arial", 24), activebackground=abgc, activeforeground=afgc, command=stop)
+titleTSL = CTkLabel(TSTab, text="Spam Bot", font=("Ubuntu", 24))
+textTSL = CTkLabel(TSTab, text="Enter the text you want to spam:", font=("Ubuntu", 16))
+textTSE = CTkEntry(TSTab, width=400, font=("Ubuntu", 16))
+numberTSL = CTkLabel(TSTab, text="How many times do you want to spam it:", font=("Ubuntu", 16))
+numberTSE = CTkEntry(TSTab, width=250, font=("Ubuntu", 16))
+messagesSpammedTSL = CTkLabel(TSTab, text="", font=("Ubuntu", 14))
+messagesLeftTSL = CTkLabel(TSTab, text="", font=("Ubuntu", 16))
+startTSB = CTkButton(TSTab, text="Start", font=("Ubuntu", 24), command=startTS)
+stopTSB = CTkButton(TSTab, text="Stop", font=("Ubuntu", 24), command=stop)
 
 titleTSL.pack(padx=30, pady=20)
 textTSL.pack(fill='both')
@@ -329,12 +314,12 @@ stopTSB.pack(padx=10, pady=10)
 
 # Infinite Spam (IS) mode tab
 
-titleISL = Label(ISTab, text="Spam Bot", bg=bgc, fg=fgc, font=("Arial", 24))
-textISL = Label(ISTab, text="Enter the text you want to spam:", bg=bgc, fg=fgc, font=("Arial", 16))
-textISE = Entry(ISTab, bg=bgc, fg=fgc, font=("Arial", 16), width=50)
-messagesSpammedISL = Label(ISTab, text="", bg=bgc, fg=fgc, font=("Arial", 14))
-startISB = Button(ISTab, text="Start", bg=bgc, fg=fgc, activebackground=abgc, activeforeground=afgc, font=("Arial", 24), command=startIS)
-stopISB = Button(ISTab, text="Stop", bg=bgc, fg=fgc, activebackground=abgc, activeforeground=afgc, font=("Arial", 24), command=stop)
+titleISL = CTkLabel(ISTab, text="Spam Bot", font=("Ubuntu", 24))
+textISL = CTkLabel(ISTab, text="Enter the text you want to spam:", font=("Ubuntu", 16))
+textISE = CTkEntry(ISTab, font=("Ubuntu", 16), width=400)
+messagesSpammedISL = CTkLabel(ISTab, text="", font=("Ubuntu", 14))
+startISB = CTkButton(ISTab, text="Start", font=("Ubuntu", 24), command=startIS)
+stopISB = CTkButton(ISTab, text="Stop", font=("Ubuntu", 24), command=stop)
 
 titleISL.pack(padx=30, pady=20)
 textISL.pack(fill='both')
@@ -345,13 +330,13 @@ stopISB.pack(padx=10, pady=10)
 
 # File Spam (FS) mode tab
 
-titleFSL = Label(FSTab, text="Spam Bot", bg=bgc, fg=fgc, font=("Arial", 24))
-pathFSL = Label(FSTab, text="File path:", bg=bgc, fg=fgc, font=("Arial", 16))
-pathFSE = Entry(FSTab, textvariable=filePath, bg=bgc, fg=fgc, font=("Arial", 16), width=50)
-messagesSpammedFSL = Label(FSTab, text="", bg=bgc, fg=fgc, font=("Arial", 14))
-uploadFSB = Button(FSTab, text='Select File', bg=bgc, fg=fgc, font=("Arial", 24), activebackground=abgc, activeforeground=afgc, command=uploadFile)
-startFSB = Button(FSTab, text="Start", bg=bgc, fg=fgc, font=("Arial", 24), activebackground=abgc, activeforeground=afgc, command=startFS)
-stopFSB = Button(FSTab, text="Stop", bg=bgc, fg=fgc, font=("Arial", 24), activebackground=abgc, activeforeground=afgc, command=stop)
+titleFSL = CTkLabel(FSTab, text="Spam Bot", font=("Ubuntu", 24))
+pathFSL = CTkLabel(FSTab, text="File path:", font=("Ubuntu", 16))
+pathFSE = CTkEntry(FSTab, textvariable=filePath, font=("Ubuntu", 16), width=400)
+messagesSpammedFSL = CTkLabel(FSTab, text="", font=("Ubuntu", 14))
+uploadFSB = CTkButton(FSTab, text='Select File', font=("Ubuntu", 24), command=uploadFile)
+startFSB = CTkButton(FSTab, text="Start", font=("Ubuntu", 24), command=startFS)
+stopFSB = CTkButton(FSTab, text="Stop", font=("Ubuntu", 24), command=stop)
 
 titleFSL.pack(padx=30, pady=20)
 pathFSL.pack(fill='both')
@@ -363,29 +348,33 @@ stopFSB.pack(padx=10, pady=10)
 
 # Settings (S) tab
 
-titleSL = Label(settingsT, text="Settings", bg=bgc, fg=fgc, font=("Arial", 24))
-startingDelaySL = Label(settingsT, text="Starting Delay:", anchor='w', bg=bgc, fg=fgc, font=("Arial", 16))
-startingDelaySE = Entry(settingsT, textvariable=startingDelaySV, bg=bgc, fg=fgc, font=("Arial", 16), width=40)
-messageDelaySL = Label(settingsT, text="Message Delay:", anchor='w', bg=bgc, fg=fgc, font=("Arial", 16))
-messageDelaySE = Entry(settingsT, textvariable=messageDelaySV, bg=bgc, fg=fgc, font=("Arial", 16), width=40)
-textEndingSL = Label(settingsT, text="Button pressed after each sentence:", anchor='w', bg=bgc, fg=fgc, font=("Arial", 16))
-textEndingSE = Entry(settingsT, textvariable=textEndingSV, bg=bgc, fg=fgc, font=("Arial", 16), width=40)
-availableKeysSL = Label(settingsT, text="list of available keys can be found here: https://pytutorial.com/pyautogui-keyboard-keys", anchor='w', bg=bgc, fg=fgc, font=("Arial", 10))
-saveSB = Button(settingsT, text="Save", bg=bgc, fg=fgc, font=("Arial", 24), activebackground=abgc, activeforeground=afgc, command=applySettings)
-resetSB = Button(settingsT, text="Reset to default", bg=bgc, fg=fgc, font=("Arial", 20), activebackground=abgc, activeforeground=afgc, command=resetSettings)
-noteSL = Label(settingsT, text="Note: you'll have to restart the app to apply changes", bg=bgc, fg=fgc, font=("Arial", 14))
+if disableSettings is False:
+    titleSL = CTkLabel(settingsTab, text="Settings", font=("Ubuntu", 24))
+    startingDelaySL = CTkLabel(settingsTab, text="Starting Delay:", anchor='w', font=("Ubuntu", 16))
+    startingDelaySE = CTkEntry(settingsTab, textvariable=startingDelaySV, font=("Ubuntu", 16), width=400)
+    messageDelaySL = CTkLabel(settingsTab, text="Message Delay:", anchor='w', font=("Ubuntu", 16))
+    messageDelaySE = CTkEntry(settingsTab, textvariable=messageDelaySV, font=("Ubuntu", 16), width=400)
+    textEndingSL = CTkLabel(settingsTab, text="Key pressed after each sentence:", anchor='w', font=("Ubuntu", 16))
+    textEndingSE = CTkEntry(settingsTab, textvariable=textEndingSV, font=("Ubuntu", 16), width=400)
+    availableKeysSL = CTkLabel(settingsTab, text="list of available keys can be found here: https://pytutorial.com/pyautogui-keyboard-keys", anchor='w', font=("Ubuntu", 10))
+    saveSB = CTkButton(settingsTab, text="Save", font=("Ubuntu", 24), command=applySettings)
+    resetSB = CTkButton(settingsTab, text="Reset to default", font=("Ubuntu", 20), command=resetSettings)
+    noteSL = CTkLabel(settingsTab, text="Note: you'll have to restart the app to apply changes", font=("Ubuntu", 14))
 
-titleSL.pack(padx=30, pady=20)
-startingDelaySL.pack(fill='both')
-startingDelaySE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
-messageDelaySL.pack(fill='both')
-messageDelaySE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
-textEndingSL.pack(fill='both')
-textEndingSE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
-availableKeysSL.pack(fill='both')
-saveSB.pack(padx=10, pady=10)
-resetSB.pack(padx=7, pady=7)
-noteSL.pack()
+    titleSL.pack(padx=30, pady=20)
+    startingDelaySL.pack(fill='both')
+    startingDelaySE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
+    messageDelaySL.pack(fill='both')
+    messageDelaySE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
+    textEndingSL.pack(fill='both')
+    textEndingSE.pack(padx=10,pady=10, ipady=10, side="top", anchor="e")
+    availableKeysSL.pack(fill='both')
+    saveSB.pack(padx=10, pady=10)
+    resetSB.pack(padx=7, pady=7)
+    noteSL.pack()
+else:
+    diableSL = CTkLabel(settingsTab, text="The settings file cannot be found", anchor='w', font=("Ubuntu", 24))
+    diableSL.pack(fill='both')
 
 print("Done loading!\n")
 
