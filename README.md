@@ -10,7 +10,7 @@ Basically, the bot takes the text you entered in the first input and takes the n
 
 First, you need to install Python and make sure it's added to PATH, Then open the Command Prompt and type this command:
 
-```batch
+```bash
 pip install pyautogui customtkinter
 ```
 
@@ -50,4 +50,4 @@ That's it. you're done!
 
 ## License
 
-This code is available under the MIT license. See the LICENSE.md file or [click this link](https://rem.mit-license.org/) for more info.
+This code is available under the MIT license. See the LICENSE.md file or [click this link](https://mit-license.org/) for more info.
